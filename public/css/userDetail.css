@@ -3,15 +3,15 @@ body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f9;
   margin: 0;
-  padding-top: 0px;
   text-align: center;
 }
 
 /* Header */
 .header-nav {
-  background: #007bff;
-  padding: 15px;
+  background: #02002c;
   color: white;
+  border-radius: 8px 8px 0 0;
+  border: 2px solid #c80909;
   font-size: 22px;
 }
 
@@ -37,9 +37,9 @@ body {
 
 .card h3 {
   margin: 0;
-  color: #007bff;
+  color: #02002c;
   font-size: 18px;
-  border-bottom: 2px solid #007bff;
+  border-bottom: 2px solid #02002c;
   padding-bottom: 5px;
 }
 
@@ -55,17 +55,15 @@ body {
   padding: 10px 20px;
   font-size: 16px;
   color: white;
-  background: #007bff;
+  background: #c80909;
   text-decoration: none;
   border-radius: 5px;
+  /* You had two border declarations; we’ll keep one */
+  border: 2px solid #02002c;
   transition: 0.3s;
-  border: none;
   cursor: pointer;
 }
 
-.dashboard-btn:hover {
-  background: #0056b3;
-}
 .panel {
   font-size: 18px;
   display: flex;
