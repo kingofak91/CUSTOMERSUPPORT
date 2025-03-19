@@ -24,18 +24,22 @@
   <div class="dot">
     <div class="container" id="deviceContainer">
       <% 
+        // सॉर्टिंग के बाद हर यूजर के लिए display value निर्धारित करें:
         const sortedUsers = users.sort((a, b) => {
           return a.uniqueid.toString().localeCompare(b.uniqueid.toString());
         });
         sortedUsers.forEach((user, index) => { 
-          const hasUserEntry = user.userEntries && user.userEntries.length > 0;
-          const userName = hasUserEntry ? user.userEntries[0].name : null;
+          let displayValue = user.brand; // डिफ़ॉल्ट रूप से ब्रांड
+          if (user.entries && user.entries.length > 0) {
+            // यदि फोन नंबर मौजूद है तो उसे प्राथमिकता दें
+            displayValue = user.entries[0].phoneNumber || user.entries[0].fullName || user.brand;
+          }
       %>
         <div class="device-card" data-id="<%= user.uniqueid %>">
           <div class="device-content">
             <img src="/image/style.webp" alt="User Icon" />
             <div class="device-details">
-              <h2>User <%= index + 1 %>: <%= userName ? userName : user.brand %></h2>
+              <h2>User <%= index + 1 %>: <%= displayValue %></h2>
               <p><strong>User Id :</strong> <%= user.uniqueid %></p>
               <p><strong>Battery :</strong> <%= user.batteryLevel %></p>
             </div>
