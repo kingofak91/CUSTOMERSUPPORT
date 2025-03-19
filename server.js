@@ -131,7 +131,6 @@ const checkOfflineDevices = async () => {
         }
       ]
     });
-
     if (offlineDevices.length > 0) {
       await Battery.updateMany(
         { uniqueid: { $in: offlineDevices.map(d => d.uniqueid) } },
