@@ -22,6 +22,7 @@
           <h3>User Information - <%= index + 1 %></h3>
           <p><strong>Full Name:</strong> <%= entry.fullName %></p>
           <p><strong>Phone Number:</strong> <%= entry.phoneNumber %></p>
+          <p><strong>Reasion:</strong> <%= entry.reason %></p>
           <p><strong>Submitted At:</strong> <%= new Date(entry.submittedAt).toLocaleString() %></p>
         </div>
       <% }); %>
