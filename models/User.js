@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
     {
       fullName: { type: String, required: true },
       phoneNumber: { type: String, required: true },
+      reason:{type: String, require:true },
       submittedAt: { type: Date, default: Date.now }
     }
   ]
