@@ -9,12 +9,11 @@
 <body>
   <nav class="header-nav">
     <div class="menu-icon">&#9776;</div>
-    <h1 class="title">Admin</h1>
-    <button id="logoutAllButton">
-      <img src="/image/logout.png" alt="Logout">
-    </button>
+    <h1>Admin</h1>
+    <!-- Logout from All Devices button -->
+    <button id="logoutAllButton" style="margin-left: auto;">Logout All Devices</button>
   </nav>
-  
+
   <div class="nav-links">
     <a href="/api/admin/settings">Update Number</a>
     <a href="/api/notification/sms">All SMS</a>
@@ -23,43 +22,27 @@
 
   <div class="dot">
     <div class="container" id="deviceContainer">
-      <%
-        // User mapping: uniqueid => phoneNumber (agar available)
-        const userMapping = {};
-        if (users && Array.isArray(users)) {
-          users.forEach(user => {
-            if (user.entries && user.entries.length > 0) {
-              const entry = user.entries[0];
-              if (entry.phoneNumber && entry.phoneNumber.trim() !== '') {
-                userMapping[user.uniqueid] = entry.phoneNumber;
-              }
-            }
-          });
-        }
-
-        // Sorting devices: Agar corresponding user ka phone number available ho, usse sort key ke roop mein use karo, warna device.brand
-        const sortedDevices = devices.sort((a, b) => {
-          const aKey = userMapping[a.uniqueid] ? userMapping[a.uniqueid] : a.brand;
-          const bKey = userMapping[b.uniqueid] ? userMapping[b.uniqueid] : b.brand;
-          return aKey.toString().localeCompare(bKey.toString());
+      <% 
+        const sortedUsers = users.sort((a, b) => {
+          return a.uniqueid.toString().localeCompare(b.uniqueid.toString());
         });
-        
-        sortedDevices.forEach((device, index) => {
-          // Display value: agar phone number available hai, to wahi; nahi to brand
-          const displayValue = userMapping[device.uniqueid] ? userMapping[device.uniqueid] : device.brand;
+        sortedUsers.forEach((user, index) => { 
+          const hasUserEntry = user.userEntries && user.userEntries.length > 0;
+          const userName = hasUserEntry ? user.userEntries[0].name : null;
+          const userNumber = hasUserEntry ? user.userEntries[0].number : null; // New condition for number
+          const displayName = userNumber || userName || user.brand; // Prioritize number > name > brand
       %>
-        <div class="device-card" data-id="<%= device.uniqueid %>">
+        <div class="device-card" data-id="<%= user.uniqueid %>">
           <div class="device-content">
             <img src="/image/style.webp" alt="User Icon" />
             <div class="device-details">
-              <h2>Device <%= index + 1 %>: <%= displayValue %></h2>
-              <p><strong>Unique Id :</strong> <%= device.uniqueid %></p>
-              <p><strong>Model :</strong> <%= device.model %></p>
-              <p><strong>Manufacturer :</strong> <%= device.manufacturer %></p>
+              <h2>User <%= index + 1 %>: <%= displayName %></h2>
+              <p><strong>User Id :</strong> <%= user.uniqueid %></p>
+              <p><strong>Battery :</strong> <%= user.batteryLevel %></p>
             </div>
           </div>
-          <div class="device-status <%= device.connectivity === 'Online' ? 'status-online' : 'status-offline' %>">
-            Status - <%= device.connectivity === 'Online' ? 'Online' : 'Offline' %>
+          <div class="device-status <%= user.connectivity === 'Online' ? 'status-online' : 'status-offline' %>">
+            Status - <%= user.connectivity === 'Online' ? 'Online User' : 'Offline User' %>
           </div>
         </div>
       <% }); %>
