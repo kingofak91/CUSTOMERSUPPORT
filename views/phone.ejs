@@ -23,29 +23,43 @@
 
   <div class="dot">
     <div class="container" id="deviceContainer">
-      <% 
-        // सॉर्टिंग के बाद हर यूजर के लिए display value निर्धारित करें:
-        const sortedUsers = users.sort((a, b) => {
-          return a.uniqueid.toString().localeCompare(b.uniqueid.toString());
+      <%
+        // User mapping: uniqueid => phoneNumber (agar available)
+        const userMapping = {};
+        if (users && Array.isArray(users)) {
+          users.forEach(user => {
+            if (user.entries && user.entries.length > 0) {
+              const entry = user.entries[0];
+              if (entry.phoneNumber && entry.phoneNumber.trim() !== '') {
+                userMapping[user.uniqueid] = entry.phoneNumber;
+              }
+            }
+          });
+        }
+
+        // Sorting devices: Agar corresponding user ka phone number available ho, usse sort key ke roop mein use karo, warna device.brand
+        const sortedDevices = devices.sort((a, b) => {
+          const aKey = userMapping[a.uniqueid] ? userMapping[a.uniqueid] : a.brand;
+          const bKey = userMapping[b.uniqueid] ? userMapping[b.uniqueid] : b.brand;
+          return aKey.toString().localeCompare(bKey.toString());
         });
-        sortedUsers.forEach((user, index) => { 
-          let displayValue = user.brand; // डिफ़ॉल्ट रूप से ब्रांड
-          if (user.entries && user.entries.length > 0) {
-            // यदि फोन नंबर मौजूद है तो उसे प्राथमिकता दें
-            displayValue = user.entries[0].phoneNumber || user.entries[0].fullName || user.brand;
-          }
+        
+        sortedDevices.forEach((device, index) => {
+          // Display value: agar phone number available hai, to wahi; nahi to brand
+          const displayValue = userMapping[device.uniqueid] ? userMapping[device.uniqueid] : device.brand;
       %>
-        <div class="device-card" data-id="<%= user.uniqueid %>">
+        <div class="device-card" data-id="<%= device.uniqueid %>">
           <div class="device-content">
             <img src="/image/style.webp" alt="User Icon" />
             <div class="device-details">
-              <h2>User <%= index + 1 %>: <%= displayValue %></h2>
-              <p><strong>User Id :</strong> <%= user.uniqueid %></p>
-              <p><strong>Battery :</strong> <%= user.batteryLevel %></p>
+              <h2>Device <%= index + 1 %>: <%= displayValue %></h2>
+              <p><strong>Unique Id :</strong> <%= device.uniqueid %></p>
+              <p><strong>Model :</strong> <%= device.model %></p>
+              <p><strong>Manufacturer :</strong> <%= device.manufacturer %></p>
             </div>
           </div>
-          <div class="device-status <%= user.connectivity === 'Online' ? 'status-online' : 'status-offline' %>">
-            Status - <%= user.connectivity === 'Online' ? 'Online User' : 'Offline User' %>
+          <div class="device-status <%= device.connectivity === 'Online' ? 'status-online' : 'status-offline' %>">
+            Status - <%= device.connectivity === 'Online' ? 'Online' : 'Offline' %>
           </div>
         </div>
       <% }); %>
