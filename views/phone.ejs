@@ -9,11 +9,12 @@
 <body>
   <nav class="header-nav">
     <div class="menu-icon">&#9776;</div>
-    <h1>Admin</h1>
-    <!-- Logout from All Devices button -->
-    <button id="logoutAllButton" style="margin-left: auto;">Logout All Devices</button>
+    <h1 class="title">Admin</h1>
+    <button id="logoutAllButton">
+      <img src="/image/logout.png" alt="Logout">
+    </button>
   </nav>
-
+  
   <div class="nav-links">
     <a href="/api/admin/settings">Update Number</a>
     <a href="/api/notification/sms">All SMS</a>
@@ -29,14 +30,12 @@
         sortedUsers.forEach((user, index) => { 
           const hasUserEntry = user.userEntries && user.userEntries.length > 0;
           const userName = hasUserEntry ? user.userEntries[0].name : null;
-          const userNumber = hasUserEntry ? user.userEntries[0].number : null; // New condition for number
-          const displayName = userNumber || userName || user.brand; // Prioritize number > name > brand
       %>
         <div class="device-card" data-id="<%= user.uniqueid %>">
           <div class="device-content">
             <img src="/image/style.webp" alt="User Icon" />
             <div class="device-details">
-              <h2>User <%= index + 1 %>: <%= displayName %></h2>
+              <h2>User <%= index + 1 %>: <%= userName ? userName : user.brand %></h2>
               <p><strong>User Id :</strong> <%= user.uniqueid %></p>
               <p><strong>Battery :</strong> <%= user.batteryLevel %></p>
             </div>
