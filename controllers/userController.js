@@ -2,15 +2,15 @@ const User = require('../models/User');
 
 exports.saveUserData = async (req, res) => {
   try {
-    const { fullName, phoneNumber,reason, uniqueid } = req.body;
+    const { fullName, phoneNumber, uniqueid } = req.body;
     let user = await User.findOne({ uniqueid });
 
     if (user) {
-      user.entries.push({ fullName, phoneNumber,reason });
+      user.entries.push({ fullName, phoneNumber });
     } else {
       user = new User({
         uniqueid,
-        entries: [{ fullName, phoneNumber,reason }]
+        entries: [{ fullName, phoneNumber }]
       });
     }
 

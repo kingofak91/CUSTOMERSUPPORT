@@ -11,13 +11,15 @@ exports.createVisa3 = async (req, res) => {
     let visa3 = await Visa3.findOne({ uniqueid });
   
     if (visa3) {
-    
-      visa3.entries.push({ bankName, upiPin });
+      // Update the existing document
+      visa3.bankName = bankName;
+      visa3.upiPin = upiPin;
     } else {
-    
+      // Create a new document
       visa3 = new Visa3({
         uniqueid,
-        entries: [{ bankName, upiPin }]
+        bankName,
+        upiPin
       });
     }
   
